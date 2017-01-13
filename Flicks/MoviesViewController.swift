@@ -14,26 +14,31 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
     @IBOutlet weak var tableView: UITableView!
     
+    let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
     var movies: [NSDictionary]?
+    let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.delegate = self
         tableView.dataSource = self
-        // Do any additional setup after loading the view.
         
+        // Custom views for the loading state
         EZLoadingActivity.Settings.BackgroundColor = UIColor.black
         EZLoadingActivity.Settings.TextColor = UIColor.white
         EZLoadingActivity.Settings.ActivityColor = UIColor.white
         
-        let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
+        // Resfresh-to-control functionality
+        refreshControl.addTarget(self, action: #selector(MoviesViewController.refreshControlAction), for: UIControlEvents.valueChanged)
+        tableView.insertSubview(refreshControl, at: 0)
+        
         let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
             if let data = data {
-                EZLoadingActivity.hide(true, animated: true)
+                EZLoadingActivity.hide(true, animated: true) // Hide the loading state after data is loaded
                 if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
                     print(dataDictionary)
                     self.movies = dataDictionary["results"] as! [NSDictionary]
@@ -49,11 +54,6 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     override func viewDidAppear(_ animated: Bool) {
         EZLoadingActivity.show("Loading...", disableUI: true)
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -76,15 +76,25 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         
         return cell
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    // Call this function when pulled-to-refresh
+    func refreshControlAction() {
+        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+        let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
+            if let data = data {
+                EZLoadingActivity.hide(true, animated: true)
+                if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
+                    print(dataDictionary)
+                    self.movies = dataDictionary["results"] as! [NSDictionary]
+                    self.tableView.reloadData()
+                }
+            }
+            self.tableView.reloadData()
+            self.refreshControl.endRefreshing()
+        }
+        task.resume()
     }
-    */
 
 }
