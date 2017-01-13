@@ -13,6 +13,7 @@ import EZLoadingActivity
 class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var networkView: UIView!
     
     let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
     var movies: [NSDictionary]?
@@ -33,22 +34,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         refreshControl.addTarget(self, action: #selector(MoviesViewController.refreshControlAction), for: UIControlEvents.valueChanged)
         tableView.insertSubview(refreshControl, at: 0)
         
-        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!
-        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
-        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
-            if let data = data {
-                EZLoadingActivity.hide(true, animated: true) // Hide the loading state after data is loaded
-                if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
-                    print(dataDictionary)
-                    self.movies = dataDictionary["results"] as! [NSDictionary]
-                    self.tableView.reloadData()
-                }
-            } else {
-                EZLoadingActivity.hide(false, animated: true)
-            }
-        }
-        task.resume()
+        makeApiCall()
 
     }
     
@@ -79,6 +65,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     // Call this function when pulled-to-refresh
     func refreshControlAction() {
+        EZLoadingActivity.show("Loading...", disableUI: true)
         let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
@@ -90,11 +77,40 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     self.movies = dataDictionary["results"] as! [NSDictionary]
                     self.tableView.reloadData()
                 }
+            } else {
+                EZLoadingActivity.hide(false, animated: true)
+                self.networkView.isHidden = false
             }
             self.tableView.reloadData()
             self.refreshControl.endRefreshing()
         }
         task.resume()
     }
-
+    
+    // Make call due to network failure
+    func makeApiCall() {
+        EZLoadingActivity.show("Loading...", disableUI: true)
+        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+        let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
+            if let data = data {
+                self.networkView.isHidden = true
+                EZLoadingActivity.hide(true, animated: true) // Hide the loading state after data is loaded
+                if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
+                    print(dataDictionary)
+                    self.movies = dataDictionary["results"] as! [NSDictionary]
+                    self.tableView.reloadData()
+                }
+            } else {
+                EZLoadingActivity.hide(false, animated: true)
+                self.networkView.isHidden = false
+            }
+        }
+        task.resume()
+    }
+    
+    @IBAction func buttonPressed(_ sender: Any) {
+        makeApiCall()
+    }
 }
