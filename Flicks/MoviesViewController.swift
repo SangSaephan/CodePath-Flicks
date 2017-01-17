@@ -10,13 +10,15 @@ import UIKit
 import AFNetworking
 import EZLoadingActivity
 
-class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var networkView: UIView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
     var movies: [NSDictionary]?
+    var filteredData: [NSDictionary]?
     let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
@@ -24,6 +26,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
         tableView.delegate = self
         tableView.dataSource = self
+        searchBar.delegate = self
         
         // Custom views for the loading state
         EZLoadingActivity.Settings.BackgroundColor = UIColor.black
@@ -35,7 +38,6 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.insertSubview(refreshControl, at: 0)
         
         makeApiCall()
-
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -43,12 +45,12 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies?.count ?? 0
+        return filteredData?.count ?? 0
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieCell
-        let movie = movies![indexPath.row]
+        let movie = filteredData![indexPath.row]
         let title = movie["title"] as! String
         let overview = movie["overview"] as! String
         let posterUrl = movie["poster_path"] as! String
@@ -63,10 +65,18 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         return cell
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredData = searchText.isEmpty ? movies : movies?.filter {
+            ($0["title"] as! String).range(of: searchText, options: .caseInsensitive) != nil
+        }
+        
+        tableView.reloadData()
+    }
+    
     // Call this function when pulled-to-refresh
     func refreshControlAction() {
         EZLoadingActivity.show("Loading...", disableUI: true)
-        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!
+        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&region=US")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
@@ -75,6 +85,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
                     print(dataDictionary)
                     self.movies = dataDictionary["results"] as! [NSDictionary]
+                    self.filteredData = dataDictionary["results"] as! [NSDictionary]
                     self.tableView.reloadData()
                 }
             } else {
@@ -90,7 +101,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     // Make call due to network failure
     func makeApiCall() {
         EZLoadingActivity.show("Loading...", disableUI: true)
-        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!
+        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&region=US")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
@@ -100,6 +111,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
                     print(dataDictionary)
                     self.movies = dataDictionary["results"] as! [NSDictionary]
+                    self.filteredData = dataDictionary["results"] as! [NSDictionary]
                     self.tableView.reloadData()
                 }
             } else {
