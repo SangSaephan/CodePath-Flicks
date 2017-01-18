@@ -82,6 +82,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let imageUrl = NSURL(string: baseUrl + posterUrl)
         let imageRequest = NSURLRequest(url: imageUrl as! URL)
         
+        // Fade in images if it is being downloaded
         cell.posterImageView.setImageWith(imageRequest as URLRequest, placeholderImage: nil, success: { (imageRequest, imageResponse, image) in
             if imageResponse != nil {
                 cell.posterImageView.alpha = 0
@@ -119,8 +120,8 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 EZLoadingActivity.hide(true, animated: true)
                 if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
                     print(dataDictionary)
-                    self.movies = dataDictionary["results"] as! [NSDictionary]
-                    self.filteredData = dataDictionary["results"] as! [NSDictionary]
+                    self.movies = dataDictionary["results"] as? [NSDictionary]
+                    self.filteredData = dataDictionary["results"] as? [NSDictionary]
                     //self.tableView.reloadData()
                     self.collectionView.reloadData()
                 }
@@ -147,8 +148,8 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 EZLoadingActivity.hide(true, animated: true) // Hide the loading state after data is loaded
                 if let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
                     print(dataDictionary)
-                    self.movies = dataDictionary["results"] as! [NSDictionary]
-                    self.filteredData = dataDictionary["results"] as! [NSDictionary]
+                    self.movies = dataDictionary["results"] as? [NSDictionary]
+                    self.filteredData = dataDictionary["results"] as? [NSDictionary]
                     //self.tableView.reloadData()
                     self.collectionView.reloadData()
                 }
@@ -160,6 +161,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         task.resume()
     }
     
+    // Make API call after network error pops up
     @IBAction func buttonPressed(_ sender: Any) {
         makeApiCall()
     }
