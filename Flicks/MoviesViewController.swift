@@ -80,8 +80,21 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let baseUrl = "https://image.tmdb.org/t/p/w342"
         
         let imageUrl = NSURL(string: baseUrl + posterUrl)
+        let imageRequest = NSURLRequest(url: imageUrl as! URL)
         
-        cell.posterImageView.setImageWith(imageUrl as! URL)
+        cell.posterImageView.setImageWith(imageRequest as URLRequest, placeholderImage: nil, success: { (imageRequest, imageResponse, image) in
+            if imageResponse != nil {
+                cell.posterImageView.alpha = 0
+                cell.posterImageView.image = image
+                UIView.animate(withDuration: 0.5, animations: {
+                    cell.posterImageView.alpha = 1
+                })
+            } else {
+                cell.posterImageView.image = image
+            }
+        }, failure: {(imageRequest, imageResponse, error) -> Void in
+            
+        })
         
         return cell
     }
