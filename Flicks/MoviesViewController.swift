@@ -10,11 +10,12 @@ import UIKit
 import AFNetworking
 import EZLoadingActivity
 
-class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var networkView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
     var movies: [NSDictionary]?
@@ -24,8 +25,10 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.delegate = self
-        tableView.dataSource = self
+        //tableView.delegate = self
+        //tableView.dataSource = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
         searchBar.delegate = self
         
         // Custom views for the loading state
@@ -35,7 +38,8 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         
         // Resfresh-to-control functionality
         refreshControl.addTarget(self, action: #selector(MoviesViewController.refreshControlAction), for: UIControlEvents.valueChanged)
-        tableView.insertSubview(refreshControl, at: 0)
+        //tableView.insertSubview(refreshControl, at: 0)
+        collectionView.insertSubview(refreshControl, at: 0)
         
         makeApiCall()
     }
@@ -65,12 +69,30 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         return cell
     }
     
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return filteredData?.count ?? 0
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionCell", for: indexPath) as! CollectionViewCell
+        let movie = filteredData![indexPath.row]
+        let posterUrl = movie["poster_path"] as! String
+        let baseUrl = "https://image.tmdb.org/t/p/w342"
+        
+        let imageUrl = NSURL(string: baseUrl + posterUrl)
+        
+        cell.posterImageView.setImageWith(imageUrl as! URL)
+        
+        return cell
+    }
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filteredData = searchText.isEmpty ? movies : movies?.filter {
             ($0["title"] as! String).range(of: searchText, options: .caseInsensitive) != nil
         }
         
-        tableView.reloadData()
+        //tableView.reloadData()
+        collectionView.reloadData()
     }
     
     // Call this function when pulled-to-refresh
@@ -86,13 +108,15 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     print(dataDictionary)
                     self.movies = dataDictionary["results"] as! [NSDictionary]
                     self.filteredData = dataDictionary["results"] as! [NSDictionary]
-                    self.tableView.reloadData()
+                    //self.tableView.reloadData()
+                    self.collectionView.reloadData()
                 }
             } else {
                 EZLoadingActivity.hide(false, animated: true)
                 self.networkView.isHidden = false
             }
-            self.tableView.reloadData()
+            //self.tableView.reloadData()
+            self.collectionView.reloadData()
             self.refreshControl.endRefreshing()
         }
         task.resume()
@@ -112,7 +136,8 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     print(dataDictionary)
                     self.movies = dataDictionary["results"] as! [NSDictionary]
                     self.filteredData = dataDictionary["results"] as! [NSDictionary]
-                    self.tableView.reloadData()
+                    //self.tableView.reloadData()
+                    self.collectionView.reloadData()
                 }
             } else {
                 EZLoadingActivity.hide(false, animated: true)
