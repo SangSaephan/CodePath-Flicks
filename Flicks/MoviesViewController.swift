@@ -72,26 +72,29 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionCell", for: indexPath) as! CollectionViewCell
         let movie = filteredData![indexPath.row]
-        let posterUrl = movie["poster_path"] as! String
         let baseUrl = "https://image.tmdb.org/t/p/w342"
         
-        let imageUrl = NSURL(string: baseUrl + posterUrl)
-        let imageRequest = NSURLRequest(url: imageUrl as! URL)
-        
-        // Fade in images if it is being downloaded
-        cell.posterImageView.setImageWith(imageRequest as URLRequest, placeholderImage: nil, success: { (imageRequest, imageResponse, image) in
-            if imageResponse != nil {
-                cell.posterImageView.alpha = 0
-                cell.posterImageView.image = image
-                UIView.animate(withDuration: 0.5, animations: {
-                    cell.posterImageView.alpha = 1
-                })
-            } else {
-                cell.posterImageView.image = image
-            }
-        }, failure: {(imageRequest, imageResponse, error) -> Void in
+        if let posterUrl = movie["poster_path"] as? String {
             
-        })
+            let imageUrl = NSURL(string: baseUrl + posterUrl)
+            let imageRequest = NSURLRequest(url: imageUrl as! URL)
+            
+            // Fade in images if it is being downloaded
+            cell.posterImageView.setImageWith(imageRequest as URLRequest, placeholderImage: nil, success: { (imageRequest, imageResponse, image) in
+                if imageResponse != nil {
+                    cell.posterImageView.alpha = 0
+                    cell.posterImageView.image = image
+                    UIView.animate(withDuration: 0.5, animations: {
+                        cell.posterImageView.alpha = 1
+                    })
+                } else {
+                    cell.posterImageView.image = image
+                }
+            }, failure: {(imageRequest, imageResponse, error) -> Void in
+                
+            })
+        }
+        
         
         return cell
     }
