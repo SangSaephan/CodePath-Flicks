@@ -44,10 +44,6 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         makeApiCall()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        EZLoadingActivity.show("Loading...", disableUI: true)
-    }
-    
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredData?.count ?? 0
     }
@@ -159,6 +155,16 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
             }
         }
         task.resume()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let cell = sender as! UICollectionViewCell
+        let indexPath = collectionView.indexPath(for: cell)
+        
+        let movie = movies![(indexPath!.row)]
+        
+        let detailViewController = segue.destination as! DetailViewController
+        detailViewController.movie = movie
     }
     
     // Make API call after network error pops up
