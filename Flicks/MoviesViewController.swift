@@ -21,6 +21,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     var movies: [NSDictionary]?
     var filteredData: [NSDictionary]?
     let refreshControl = UIRefreshControl()
+    var endPoint: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,7 +112,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     // Call this function when pulled-to-refresh
     func refreshControlAction() {
         EZLoadingActivity.show("Loading...", disableUI: true)
-        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&region=US")!
+        let url = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint)?api_key=\(apiKey)&region=US")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
@@ -138,7 +139,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     // Make call due to network failure
     func makeApiCall() {
         EZLoadingActivity.show("Loading...", disableUI: true)
-        let url = URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&region=US")!
+        let url = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)&region=US")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
