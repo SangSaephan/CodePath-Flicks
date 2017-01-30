@@ -73,23 +73,47 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionCell", for: indexPath) as! CollectionViewCell
         let movie = filteredData![indexPath.row]
-        let baseUrl = "https://image.tmdb.org/t/p/w342"
+        //let baseUrl = "https://image.tmdb.org/t/p/w342"
+        let smallBaseUrl = "https://image.tmdb.org/t/p/w45"
+        let largeBaseUrl = "https://image.tmdb.org/t/p/original"
         
         if let posterUrl = movie["poster_path"] as? String {
             
-            let imageUrl = NSURL(string: baseUrl + posterUrl)
-            let imageRequest = NSURLRequest(url: imageUrl as! URL)
+            //let imageUrl = NSURL(string: baseUrl + posterUrl)
+            let smallImageUrl = NSURL(string: smallBaseUrl + posterUrl)
+            let largeImageUrl = NSURL(string: largeBaseUrl + posterUrl)
             
-            // Fade in images if it is being downloaded
-            cell.posterImageView.setImageWith(imageRequest as URLRequest, placeholderImage: nil, success: { (imageRequest, imageResponse, image) in
-                if imageResponse != nil {
+            //let imageRequest = NSURLRequest(url: imageUrl as! URL)
+            let smallImageRequest = NSURLRequest(url: smallImageUrl as! URL)
+            let largeImageRequest = NSURLRequest(url: largeImageUrl as! URL)
+            
+            // Load low resolution poster image, followed by the high resolution version
+            cell.posterImageView.setImageWith(smallImageRequest as URLRequest, placeholderImage: nil, success: { (smallImageRequest, smallImageResponse, smallImage) in
+                if smallImageResponse != nil {
+                    
+                    // Fade the images as they load
                     cell.posterImageView.alpha = 0
-                    cell.posterImageView.image = image
+                    cell.posterImageView.image = smallImage
                     UIView.animate(withDuration: 0.5, animations: {
                         cell.posterImageView.alpha = 1
+                        
+                    }, completion: { (success) -> Void in
+                        // Load high resolution after low resolution images are completed
+                        cell.posterImageView.setImageWith(largeImageRequest as URLRequest, placeholderImage: nil, success: { (largeImageRequest, slargeImageResponse, largeImage) in
+                            cell.posterImageView.image = largeImage
+                            
+                        }, failure: {(imageRequest, imageResponse, error) -> Void in
+                            
+                        })
                     })
                 } else {
-                    cell.posterImageView.image = image
+                    //cell.posterImageView.image = smallImage
+                    // If images are cached, load the large resolution image
+                    cell.posterImageView.setImageWith(largeImageRequest as URLRequest, placeholderImage: nil, success: { (largeImageRequest, slargeImageResponse, largeImage) in
+                        cell.posterImageView.image = largeImage
+                    }, failure: {(imageRequest, imageResponse, error) -> Void in
+                        
+                    })
                 }
             }, failure: {(imageRequest, imageResponse, error) -> Void in
                 
@@ -98,6 +122,16 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        let cell =  collectionView.cellForItem(at: indexPath) as! CollectionViewCell
+        cell.cellBackgroundView.alpha = 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        let cell =  collectionView.cellForItem(at: indexPath) as! CollectionViewCell
+        cell.cellBackgroundView.alpha = 0.5
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -112,7 +146,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     // Call this function when pulled-to-refresh
     func refreshControlAction() {
         EZLoadingActivity.show("Loading...", disableUI: true)
-        let url = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint)?api_key=\(apiKey)&region=US")!
+        let url = URL(string: "https://api.themoviedb.org/3/movie/\(endPoint!)?api_key=\(apiKey)&region=US")!
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         let task: URLSessionDataTask = session.dataTask(with: request) { (data: Data?, response: URLResponse?, error: Error?) in
@@ -162,7 +196,7 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let cell = sender as! UICollectionViewCell
+        let cell = sender as! CollectionViewCell
         let indexPath = collectionView.indexPath(for: cell)
         
         let movie = movies![(indexPath!.row)]

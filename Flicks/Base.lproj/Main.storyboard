@@ -30,7 +30,7 @@
                                         <rect key="frame" x="0.0" y="28" width="375" height="147"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7qj-bd-WJO" id="C0p-SW-AGh">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="147"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="146"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yCd-mR-OOa">
@@ -91,6 +91,7 @@
                                             </subviews>
                                         </view>
                                         <connections>
+                                            <outlet property="cellBackgroundView" destination="FKC-SP-kon" id="Gkr-QK-ubB"/>
                                             <outlet property="posterImageView" destination="2uA-ZK-LFt" id="DGU-Jc-J9j"/>
                                             <segue destination="EPF-0F-wBU" kind="push" id="Y7y-Ko-wvt"/>
                                         </connections>
