@@ -32,6 +32,10 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         collectionView.dataSource = self
         searchBar.delegate = self
         
+        // Font attributes for navigation bar
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
+        navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName: UIFont.boldSystemFont(ofSize: 22), NSForegroundColorAttributeName: UIColor(red: 235/255, green: 220/255, blue: 178/255, alpha: 1)]
+        
         // Custom views for the loading state
         EZLoadingActivity.Settings.BackgroundColor = UIColor.black
         EZLoadingActivity.Settings.TextColor = UIColor.white
