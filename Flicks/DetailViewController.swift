@@ -15,6 +15,7 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var overviewLabel: UILabel!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var infoView: UIView!
+    @IBOutlet weak var overviewTextView: UITextView!
     
     var movie: NSDictionary!
     
@@ -24,15 +25,17 @@ class DetailViewController: UIViewController {
         self.navigationItem.title = "Movie Details"
         
         // Set size for scroll view
-        scrollView.contentSize = CGSize(width: scrollView.frame.size.width, height: infoView.frame.origin.y + infoView.frame.size.height)
+        scrollView.contentSize = CGSize(width: scrollView.frame.size.width, height: infoView.frame.origin.y + infoView.frame.size.height + (tabBarController?.tabBar.frame.size.height)!)
+        
+        // Set height for poster image so it doesn't hide behind tab bar
+        posterImageView.frame.size.height = posterImageView.frame.size.height - (tabBarController?.tabBar.frame.size.height)!
         
         let title = movie["title"] as? String
         let overview = movie["overview"] as? String
         let baseUrl = "https://image.tmdb.org/t/p/w342"
         
         titleLabel.text = title
-        overviewLabel.text = overview
-        overviewLabel.sizeToFit()
+        overviewTextView.text = overview
         
         if let posterUrl = movie["poster_path"] as? String {
             let imageUrl = NSURL(string: baseUrl + posterUrl)

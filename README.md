@@ -64,41 +64,42 @@ I had some trouble implementing the search bar. The example given filtered an ar
 
 **Flicks** is a movies app displaying box office and top rental DVDs using [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
-Time spent: **X** hours spent in total
+Time spent: **13** hours spent in total
 
 ## User Stories
 
 The following **required** functionality is completed:
 
-- [ ] User can view movie details by tapping on a cell.
-- [ ] User can select from a tab bar for either **Now Playing** or **Top Rated** movies.
-- [ ] Customize the selection effect of the cell.
+- [X] User can view movie details by tapping on a cell.
+- [X] User can select from a tab bar for either **Now Playing** or **Top Rated** movies.
+- [X] Customize the selection effect of the cell.
 
 The following **optional** features are implemented:
 
-- [ ] For the large poster, load the low resolution image first and then switch to the high resolution image when complete.
-- [ ] Customize the navigation bar.
+- [X] For the large poster, load the low resolution image first and then switch to the high resolution image when complete.
+- [X] Customize the navigation bar.
 
 The following **additional** features are implemented:
 
-- [ ] List anything else that you can get done to improve the app functionality!
+- [X] Add "Upcoming" tab bar item.
+- [X] Allow movie overview to scroll if the text is too long.
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
-1. 
-2. 
+1. Add addition movie information (e.g. runtime, rating, genre, etc.).
+2. Maybe add in a placeholder image in case some images are nil.
 
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+![](Flicks2.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+I ran into some issues with the URL returning nil. I initially declared the "endPoint" variable as an unwrapped optional, and XCode wasn't giving me any errors, so I didn't know I had to unwrap it inside the URL as well.
 
 ## License
 
