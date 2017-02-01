@@ -12,4 +12,11 @@ class CollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var posterImageView: UIImageView!
     @IBOutlet weak var cellBackgroundView: UIView!
+    
+    // Add rounded corners for each collection cell
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        layer.cornerRadius = 5.0
+    }
 }
