@@ -84,6 +84,7 @@ The following **additional** features are implemented:
 - [X] Add "Upcoming" tab bar item.
 - [X] Allow movie overview to scroll if the text is too long.
 - [X] Add rounded corners for collection view cells.
+- [X] User can sort movies alphabetically or by release date.
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
@@ -94,7 +95,7 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
-![](Flicks2.gif)
+![](Flicks3.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 

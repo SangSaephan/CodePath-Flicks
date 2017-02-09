@@ -249,11 +249,37 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         sortView.isHidden = true
         collectionView.isUserInteractionEnabled = true
         collectionView.alpha = 1
+        
+        filteredData?.sort {
+            ($0["title"] as? String)! < ($1["title"] as? String)!
+        }
+        
+        movies = movies?.sorted {
+            ($0["title"] as? String)! < ($1["title"] as? String)!
+        }
+        
+        collectionView.reloadData()
+        
+        // Return to top of collection view after sorting
+        collectionView.setContentOffset(CGPoint.init(x: 0.0, y: 0.0), animated: false)
     }
     
     @IBAction func releaseDateButtonPressed(_ sender: Any) {
         sortView.isHidden = true
         collectionView.isUserInteractionEnabled = true
         collectionView.alpha = 1
+        
+        filteredData = filteredData?.sorted {
+            ($0["release_date"] as? String)! > ($1["release_date"] as? String)!
+        }
+        
+        movies = movies?.sorted {
+            ($0["release_date"] as? String)! > ($1["release_date"] as? String)!
+        }
+        
+        collectionView.reloadData()
+        
+        // Return to top of collection view after sorting
+        collectionView.setContentOffset(CGPoint.init(x: 0.0, y: 0.0), animated: false)
     }
 }
