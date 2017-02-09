@@ -27,6 +27,12 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     let refreshControl = UIRefreshControl()
     var endPoint: String!
     
+    // Formatter for Release Date
+    let dateFormatter = DateFormatter()
+    let stringFormatter = DateFormatter()
+    var date: Date?
+    var stringDate: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -86,6 +92,16 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionCell", for: indexPath) as! CollectionViewCell
         let movie = filteredData![indexPath.row]
+        
+        // Format the Release Date of each movie
+        dateFormatter.dateStyle = DateFormatter.Style.full
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        stringFormatter.dateFormat = "MMM dd, yyyy"
+        date = dateFormatter.date(from: movie["release_date"] as! String)
+        stringDate = stringFormatter.string(from: date!)
+        
+        cell.releaseDateLabel.text = "Release Date:\n" + stringDate!
+        
         //let baseUrl = "https://image.tmdb.org/t/p/w342"
         let smallBaseUrl = "https://image.tmdb.org/t/p/w45"
         let largeBaseUrl = "https://image.tmdb.org/t/p/original"

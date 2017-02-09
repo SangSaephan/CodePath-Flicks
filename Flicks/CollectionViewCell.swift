@@ -12,6 +12,7 @@ class CollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var posterImageView: UIImageView!
     @IBOutlet weak var cellBackgroundView: UIView!
+    @IBOutlet weak var releaseDateLabel: UILabel!
     
     // Add rounded corners for each collection cell
     required init?(coder aDecoder: NSCoder) {

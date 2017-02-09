@@ -85,14 +85,22 @@
                                                     <color key="backgroundColor" red="0.92156862745098034" green="0.86274509803921573" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </view>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2uA-ZK-LFt">
-                                                    <rect key="frame" x="8" y="8" width="153" height="263"/>
+                                                    <rect key="frame" x="8" y="8" width="153" height="217"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Release Date:" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4lB-re-16h">
+                                                    <rect key="frame" x="8" y="233" width="153" height="38"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                         </view>
                                         <connections>
                                             <outlet property="cellBackgroundView" destination="FKC-SP-kon" id="Gkr-QK-ubB"/>
                                             <outlet property="posterImageView" destination="2uA-ZK-LFt" id="DGU-Jc-J9j"/>
+                                            <outlet property="releaseDateLabel" destination="4lB-re-16h" id="LWg-uN-bsC"/>
                                             <segue destination="EPF-0F-wBU" kind="push" id="Y7y-Ko-wvt"/>
                                         </connections>
                                     </collectionViewCell>
