@@ -16,6 +16,10 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     @IBOutlet weak var networkView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var sortView: UIView!
+    @IBOutlet weak var alphabeticalButton: UIButton!
+    @IBOutlet weak var releaseDateButton: UIButton!
+    @IBOutlet weak var sortButton: UIButton!
     
     let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
     var movies: [NSDictionary]?
@@ -45,6 +49,11 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
         refreshControl.addTarget(self, action: #selector(MoviesViewController.refreshControlAction), for: UIControlEvents.valueChanged)
         //tableView.insertSubview(refreshControl, at: 0)
         collectionView.insertSubview(refreshControl, at: 0)
+        
+        sortView.layer.cornerRadius = 5.0
+        alphabeticalButton.layer.cornerRadius = 5.0
+        releaseDateButton.layer.cornerRadius = 5.0
+        sortButton.layer.cornerRadius = 5.0
         
         makeApiCall()
     }
@@ -212,5 +221,23 @@ class MoviesViewController: UIViewController, UITableViewDelegate, UITableViewDa
     // Make API call after network error pops up
     @IBAction func buttonPressed(_ sender: Any) {
         makeApiCall()
+    }
+    
+    @IBAction func sortButtonPressed(_ sender: Any) {
+        sortView.isHidden = false
+        collectionView.isUserInteractionEnabled = false
+        collectionView.alpha = 0.2
+    }
+    
+    @IBAction func alphabeticalButtonPressed(_ sender: Any) {
+        sortView.isHidden = true
+        collectionView.isUserInteractionEnabled = true
+        collectionView.alpha = 1
+    }
+    
+    @IBAction func releaseDateButtonPressed(_ sender: Any) {
+        sortView.isHidden = true
+        collectionView.isUserInteractionEnabled = true
+        collectionView.alpha = 1
     }
 }
